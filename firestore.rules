@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Default-deny all access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isValidUserProfile(data, userId) {
+      return data.userId == userId
+        && data.userName is string
+        && data.userName.size() <= 100
+        && (!('email' in data) || (data.email is string && data.email.size() <= 200))
+        && (!('isMaster' in data) || data.isMaster is bool)
+        && (!('monthlyBudgetLimit' in data) || data.monthlyBudgetLimit is number)
+        && (!('savedCapitalTotal' in data) || data.savedCapitalTotal is number);
+    }
+
+    // User profiles collection
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if false; // Users cannot list other users
+      
+      allow create: if isValidId(userId) 
+        && isOwner(userId)
+        && isValidUserProfile(incoming(), userId);
+        
+      allow update: if isValidId(userId) 
+        && isOwner(userId)
+        && isValidUserProfile(incoming(), userId);
+        
+      allow delete: if isValidId(userId) && isOwner(userId);
+    }
+  }
+}

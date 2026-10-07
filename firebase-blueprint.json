@@ -1,0 +1,31 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile containing household, financial, garden, and life settings.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Auth UID of the profile owner" },
+        "email": { "type": "string", "description": "Email address of the user" },
+        "userName": { "type": "string", "description": "Display name of the user", "maxLength": 100 },
+        "userRole": { "type": "string", "description": "Role of the user in the system", "maxLength": 100 },
+        "isMaster": { "type": "boolean", "description": "Whether user is master operator" },
+        "botanyName": { "type": "string", "description": "Name or designation of botany setup", "maxLength": 150 },
+        "botanyPhase": { "type": "string", "description": "Botany growth phase", "enum": ["VEGI", "BLUETE"] },
+        "botanyTargetVpd": { "type": "number", "description": "Target VPD in kPa" },
+        "petName": { "type": "string", "description": "Name of pet", "maxLength": 100 },
+        "petType": { "type": "string", "description": "Type of pet", "maxLength": 150 },
+        "monthlyBudgetLimit": { "type": "number", "description": "Monthly budget limit in Euro" },
+        "savedCapitalTotal": { "type": "number", "description": "Total saved capital in Euro" },
+        "updatedAt": { "type": "string", "description": "ISO timestamp of last update" }
+      },
+      "required": ["userId", "userName", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Private user profiles. Only the authenticated user can access their own document."
+    }
+  }
+}

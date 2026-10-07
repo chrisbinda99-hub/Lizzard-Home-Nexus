@@ -1,0 +1,6 @@
+{
+  "name": "System Echse V6.1 (Hardened)",
+  "description": "Autarkes, prädiktives Entscheidungs- und Assistenzsystem für isolierte Container-Infrastrukturen mit 14 Kern-Modulen, Quanten-Prädiktion und Null-Ballast-Protokoll.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
